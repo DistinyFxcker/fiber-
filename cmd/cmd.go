@@ -1,17 +1,22 @@
 package cmd
 
 import (
-	"cdnFiber/app"
-	"cdnFiber/app/admin"
-	"cdnFiber/app/clock"
-	"cdnFiber/app/grpcClient"
-	"cdnFiber/app/grpcServer"
-	"cdnFiber/app/initialize"
-	"cdnFiber/app/user"
 	"errors"
 	"fmt"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
+	"go_web_example/app"
+	"go_web_example/app/admin"
+	"go_web_example/app/clock"
+	"go_web_example/app/grpcClient"
+	"go_web_example/app/grpcServer"
+	"go_web_example/app/user"
 	"golang.org/x/sync/errgroup"
+	"gorm.io/gorm"
+)
+
+var (
+	ZapLog *zap.SugaredLogger
 )
 
 type serviceManage struct {
@@ -19,13 +24,13 @@ type serviceManage struct {
 	services []service.Service
 }
 
-func New() service.Service {
+func New(db *gorm.DB) service.Service {
 	_serviceManage := &serviceManage{
 		services: make([]service.Service, 0),
 		errGroup: errgroup.Group{},
 	}
 	//
-	if err := _serviceManage.addService(); err != nil {
+	if err := _serviceManage.addService(db); err != nil {
 		panic(err.Error())
 	}
 	return _serviceManage
@@ -35,10 +40,14 @@ func (this *serviceManage) Name() string {
 	return "service manage"
 }
 
-func (this *serviceManage) Init() {
+func (this *serviceManage) Init() error {
 	for _, service := range this.services {
-		service.Init()
+		err := service.Init()
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 func (this *serviceManage) Start() error {
@@ -48,8 +57,6 @@ func (this *serviceManage) Start() error {
 			return this.services[index].Start()
 		})
 	}
-
-	//会阻塞
 	return this.errGroup.Wait()
 }
 
@@ -62,20 +69,13 @@ func (this *serviceManage) Stop() error {
 	return this.errGroup.Wait()
 }
 
-//go:generate swag init --instanceName=cdnAdmin --dir=../app/admin --generalInfo=service.go  --output ../docs/cdnAdmin
-//go:generate swag init --instanceName=cdnUser --dir=../app/user  --generalInfo=service.go --output ../docs/cdnUser
+//go:generate swag init --instanceName=CdnAdmin --dir=../app/admin --generalInfo=adminService.go  --output ../docs/cdnAdmin -struct-tags dc
+//go:generate swag init --instanceName=CdnUser --dir=../app/user  --generalInfo=userService.go --output ../docs/cdnUser
 //添加服务
-func (this *serviceManage) addService() error {
-	//init服务
-	{
-		_initService := initialize.New()
-		if err := this.register(_initService); err != nil {
-			return err
-		}
-	}
+func (this *serviceManage) addService(db *gorm.DB) error {
 	//cdnAdmin服务
 	{
-		_apiService := admin.New(viper.GetString("cdnAdmin.APIPort"), viper.GetString("cdnAdmin.FiberMode"), viper.GetString("cdnAdmin.SecretKey"))
+		_apiService := admin.New(db)
 		if err := this.register(_apiService); err != nil {
 			return err
 		}

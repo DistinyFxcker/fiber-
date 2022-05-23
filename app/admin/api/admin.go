@@ -9,4 +9,21 @@ type AddAdminReq struct {
 }
 
 type GetAdminReq struct {
+	Id string `form:"id"`
+}
+
+type DeleteAdminRes struct {
+	Ids []string `json:"ids" v:"required #删除对象为必填项"`
+}
+
+type QueryAdminReq struct {
+	KeyWord string   `form:"keyword"` //昵称关键字搜索
+	Role    int      `form:"role"`    //角色，1：管理员，2：普通用户
+	GroupId string   `form:"groupId"` //用户组ID
+	Select  []string `form:"select"`  //查询字段
+
+	Limit  int    `form:"limit"`
+	Offset int    `form:"offset"`
+	Sort   string `form:"sort"`
+	Order  string `form:"order"`
 }

@@ -1,7 +1,7 @@
 package grpcServer
 
 import (
-	service "cdnFiber/app"
+	service "go_web_example/app"
 	"log"
 )
 
@@ -12,8 +12,9 @@ func New() service.Service {
 	return &grpcServer{}
 }
 
-func (a *grpcServer) Init() {
+func (a *grpcServer) Init() error {
 	log.Println("开始初始化全局服务")
+	return nil
 }
 
 func (a *grpcServer) Start() error {

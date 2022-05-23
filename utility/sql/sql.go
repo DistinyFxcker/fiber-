@@ -2,10 +2,10 @@ package sql
 
 //关系数据库
 import (
-	"cdnFiber/utility/sql/mysql"
-	"cdnFiber/utility/sql/postgre"
-	"cdnFiber/utility/sql/sqlite"
 	"errors"
+	"go_web_example/utility/sql/mysql"
+	"go_web_example/utility/sql/postgre"
+	"go_web_example/utility/sql/sqlite"
 
 	"gorm.io/gorm"
 )

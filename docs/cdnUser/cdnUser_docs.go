@@ -4,22 +4,13 @@ package cdnUser
 
 import "github.com/swaggo/swag"
 
-const docTemplatecdnUser = `{
+const docTemplateCdnUser = `{
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -27,18 +18,18 @@ const docTemplatecdnUser = `{
     "paths": {}
 }`
 
-// SwaggerInfocdnUser holds exported Swagger Info so clients can modify it
-var SwaggerInfocdnUser = &swag.Spec{
-	Version:          "1.0",
-	Host:             "petstore.swagger.io:8080",
-	BasePath:         "/v2",
+// SwaggerInfoCdnUser holds exported Swagger Info so clients can modify it
+var SwaggerInfoCdnUser = &swag.Spec{
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "cdnAdmin的swagger文档",
-	Description:      "This is a sample server Petstore server.",
-	InfoInstanceName: "cdnUser",
-	SwaggerTemplate:  docTemplatecdnUser,
+	Title:            "",
+	Description:      "",
+	InfoInstanceName: "CdnUser",
+	SwaggerTemplate:  docTemplateCdnUser,
 }
 
 func init() {
-	swag.Register(SwaggerInfocdnUser.InstanceName(), SwaggerInfocdnUser)
+	swag.Register(SwaggerInfoCdnUser.InstanceName(), SwaggerInfoCdnUser)
 }

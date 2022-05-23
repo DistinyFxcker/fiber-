@@ -1,8 +1,7 @@
 package grpcClient
 
 import (
-	service "cdnFiber/app"
-	"log"
+	service "go_web_example/app"
 )
 
 type grpcClient struct {
@@ -16,8 +15,9 @@ func (a *grpcClient) Name() string {
 	return "manager grpcClient"
 }
 
-func (a *grpcClient) Init() {
-	log.Println("开始初始化全局服务")
+func (a *grpcClient) Init() error {
+	//log.Println("开始初始化全局服务")
+	return nil
 }
 
 func (a *grpcClient) Start() error {

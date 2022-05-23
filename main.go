@@ -1,51 +1,53 @@
 package main
 
 import (
-	service "cdnFiber/app"
-	"cdnFiber/cmd"
-	"cdnFiber/infrastructure/valid"
-	"cdnFiber/utility/sql"
 	"github.com/spf13/viper"
-)
-
-var (
-	SqlConnect *sql.SqlDB
+	service "go_web_example/app"
+	"go_web_example/cmd"
+	dbCmd "go_web_example/gen/cmd"
+	"go_web_example/infrastructure/valid"
+	"go_web_example/utility/sql"
 )
 
 //var RedisConnect
-
+func init() {
+	dbCmd.InitGen()
+	SetValidator()
+}
 func main() {
 	var (
-		_svm service.Service
-		err  error
+		_svm       service.Service
+		err        error
+		sqlConnect *sql.SqlDB
 	)
-	SetConfig()
-	SetLog()
-	SetValidator()
-	//SqlConnect = sqlInit()
-	//gen.New(SqlConnect.DB())
+	//连接数据库并且迁移
+	sqlConnect = sqlInit()
+	//根据数据库创建CURL模型
+	err = dbCmd.InitMigrate(sqlConnect.DB())
+	if err != nil {
+		panic(err)
+	}
 	{
-		_svm = cmd.New()
-		_svm.Init()
+		_svm = cmd.New(sqlConnect.DB())
+		if err = _svm.Init(); err != nil {
+			panic(err)
+		}
 		if err = _svm.Start(); err != nil {
 			panic(err)
 		}
 	}
 }
 
-func SetConfig() (err error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("ini")
-	viper.AddConfigPath(".")
-	err = viper.ReadInConfig()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 //数据库初始化
 func sqlInit() *sql.SqlDB {
+	viper := viper.New()
+	viper.SetConfigName("sql")
+	viper.SetConfigType("ini")
+	viper.AddConfigPath("./gen/config")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
 	sqlDB := sql.New(sql.DBConfig{
 		DBType:      viper.GetString("sql.DBType"),
 		User:        viper.GetString("sql.User"),
@@ -63,10 +65,7 @@ func sqlInit() *sql.SqlDB {
 	return sqlDB
 }
 
-func SetLog() {
-	//zap.New()
-}
-
+//初始化全局验证
 func SetValidator() {
 	valid.Init()
 }

@@ -10,23 +10,19 @@ import (
 	"time"
 )
 
-var (
-	Zaplog *zap.SugaredLogger
-)
-
 type ZapLog struct {
 	Path string
 	Day  time.Duration
 	Hour time.Duration
 }
 
-func (this *ZapLog) InitLogger() error {
+func (this *ZapLog) InitLogger() (*zap.SugaredLogger, error) {
 	if !Exists(this.Path) {
 		file, err := os.Create(this.Path)
 		defer file.Close()
 		if err != nil {
 			fmt.Println("mkdir logPath err!")
-			return err
+			return nil, err
 		}
 	}
 	encoder := initEncoder()
@@ -49,8 +45,8 @@ func (this *ZapLog) InitLogger() error {
 		zapcore.NewCore(encoder, zapcore.AddSync(warnIoWriter), debugLevel),
 	)
 	logger := zap.New(core, zap.AddCaller()) // 需要传入 zap.AddCaller() 才会显示打日志点的文件名和行数
-	Zaplog = logger.Sugar()
-	return nil
+	Zaplog := logger.Sugar()
+	return Zaplog, nil
 }
 
 //初始化Encoder

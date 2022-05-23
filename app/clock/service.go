@@ -1,7 +1,7 @@
 package clock
 
 import (
-	service "cdnFiber/app"
+	service "go_web_example/app"
 	"log"
 )
 
@@ -16,8 +16,9 @@ func (a *Initialize) Name() string {
 	return "manager clock"
 }
 
-func (a *Initialize) Init() {
+func (a *Initialize) Init() error {
 	log.Println("开始初始化全局服务")
+	return nil
 }
 
 func (a *Initialize) Start() error {

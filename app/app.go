@@ -1,7 +1,7 @@
 package service
 
 type Service interface {
-	Init()
+	Init() error
 	Start() error
 	Stop() error
 	Name() string

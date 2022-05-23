@@ -4,7 +4,7 @@ package cdnAdmin
 
 import "github.com/swaggo/swag"
 
-const docTemplatecdnAdmin = `{
+const docTemplateCdnAdmin = `{
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
     "info": {
@@ -25,8 +25,8 @@ const docTemplatecdnAdmin = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/testapi/get-string-by-int/{some_id}": {
-            "get": {
+        "/api/v1/auth": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -109,18 +109,18 @@ const docTemplatecdnAdmin = `{
     }
 }`
 
-// SwaggerInfocdnAdmin holds exported Swagger Info so clients can modify it
-var SwaggerInfocdnAdmin = &swag.Spec{
+// SwaggerInfoCdnAdmin holds exported Swagger Info so clients can modify it
+var SwaggerInfoCdnAdmin = &swag.Spec{
 	Version:          "1.0",
-	Host:             "petstore.swagger.io:8080",
-	BasePath:         "/v2",
+	Host:             "127.0.0.1:10001",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "cdnAdmin的swagger文档",
+	Title:            "Swagger Example API",
 	Description:      "This is a sample server Petstore server.",
-	InfoInstanceName: "cdnAdmin",
-	SwaggerTemplate:  docTemplatecdnAdmin,
+	InfoInstanceName: "CdnAdmin",
+	SwaggerTemplate:  docTemplateCdnAdmin,
 }
 
 func init() {
-	swag.Register(SwaggerInfocdnAdmin.InstanceName(), SwaggerInfocdnAdmin)
+	swag.Register(SwaggerInfoCdnAdmin.InstanceName(), SwaggerInfoCdnAdmin)
 }
